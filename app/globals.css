@@ -2,26 +2,66 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+* {
+  padding: 0;
+  margin: 0;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+
+.primary-btn {
+  padding: 8px 10px 8px 20px;
+  color: white;
+  font-weight: 500;
+  border-radius: 10px;
+  background-color: #3396ff;
+}
+
+@keyframes topToBottom {
+  0% {
+    transform: translateZ(100%);
+  }
+  100% {
+    transform: translateZ(0%);
   }
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+
+.card-animation {
+  animation: card-zoom-in-zoom-out 1.5s ease-in-out;
 }
+
+@keyframes card-zoom-in-zoom-out {
+  0% {
+    transform: scale(0, 0);
+  }
+  90% {
+    transform: scale(1.1, 1.1);
+  }
+  100% {
+    transform: scale(1, 1);
+  }
+}
+
+.video-animation {
+  animation: video-zoom-in-zoom-out 1.5s ease-in-out;
+}
+
+@keyframes video-zoom-in-zoom-out {
+  0% {
+    transform: scale(0, 0);
+  }
+  90% {
+    transform: scale(1.1, 1.1);
+  }
+  100% {
+    transform: scale(1, 1);
+  }
+}
+
+
+.nft-card {
+  background: rgb(255,207,92);
+  background: linear-gradient(90deg, rgba(255,207,92,1) 0%, rgba(255,187,87,1) 100%);
+}
+
+
