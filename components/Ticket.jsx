@@ -28,7 +28,7 @@ const Ticket = (props) => {
           </p>
         </div>
         <div className="mt-2">
-          <input checked id="checked-checkbox" type="checkbox" value="" class="p-9" />
+          <input readOnly id="checked-checkbox" type="checkbox" value="" className="p-9" />
         </div>
       </div>
     </div>

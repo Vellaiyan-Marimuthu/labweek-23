@@ -10,9 +10,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body suppressHydrationWarning={true}>
-        <>
-          <WalletConnectConfig children={children} />
-        </>
+        <WalletConnectConfig children={children} />
       </body>
     </html>
   );
