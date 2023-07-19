@@ -1,12 +1,10 @@
 import { Field, Form, Formik } from "formik";
-import Image from "next/image";
-import { useState } from "react";
-import { FiExternalLink } from "react-icons/fi";
-import { BiTimeFive } from "react-icons/bi";
+import { useRouter } from "next/navigation";
 import * as Yup from "yup";
-import Ticket from "./Ticket";
+import Ticket from "../card/Ticket";
 
 const SignInForm = (props) => {
+  const router = useRouter();
   const SignInSchema = Yup.object().shape({
     email: Yup.string().email("Invalid email").required("Please enter your email"),
     fullname: Yup.string().required("Please enter your username"),
@@ -21,11 +19,13 @@ const SignInForm = (props) => {
           fullname: "",
         }}
         validationSchema={SignInSchema}
-        onSubmit={async (values) => {}}
+        onSubmit={async (values) => {
+          router.push("/pass");
+        }}
       >
         {({ errors, touched }) => (
           <Form className="mt-4 flex flex-col gap-3">
-            <Ticket title={props?.title} />
+            <Ticket title={props?.title} isFooter={true} walletAddress={props?.walletAddress} />
             {/* email */}
             <div className="flex flex-col gap-2">
               <label className="font-semibold flex gap-1">

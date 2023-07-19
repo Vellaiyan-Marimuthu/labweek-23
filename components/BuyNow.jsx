@@ -1,20 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useBalance, useSignMessage } from "wagmi";
-import TicketDetails from "./TicketDetails";
 import Cookies from "js-cookie";
-import { IS_SIGNED_IN, SING_MESSAGE } from "@/utils/constants";
+import { useEffect, useState } from "react";
+import { SiweMessage } from "siwe";
+import { useAccount, useBalance, useNetwork, useSignMessage } from "wagmi";
+import TicketDetails from "./TicketDetails";
+import { SIWE, IS_SIGNED_IN, URI } from "../utils/constants";
 
 const BuyNow = (props) => {
+  const { walletAddress } = props;
   const [isOpen, setIsOpen] = useState(false);
   const { data, isError, isLoading } = useBalance({ address: props?.address });
   const { data: signData, error, isLoading: isSignLoading, signMessage, variables } = useSignMessage();
   const [isSignedIn, setIsSignedIn] = useState(false);
-
-  const closeModal = () => {
-    setIsOpen(false);
-  };
 
   useEffect(() => {
     if (signData) {
@@ -23,6 +21,63 @@ const BuyNow = (props) => {
       Cookies.set(IS_SIGNED_IN, IS_SIGNED_IN, { expires: expiaryTime });
     }
   }, [signData]);
+
+  useEffect(() => {
+    fetchNonce();
+  }, []);
+
+  // to sign the user
+  const [state, setState] = useState();
+
+  const { chain } = useNetwork();
+  const { signMessageAsync } = useSignMessage();
+
+  const fetchNonce = async () => {
+    try {
+      const nonceRes = (await fetch("api/nonce")).json();
+      const nonce = await nonceRes;
+      setState(await nonce.data);
+    } catch (error) {}
+  };
+
+  const signUser = async () => {
+    try {
+      const chainId = chain?.id;
+      // sign user
+
+      const address = walletAddress;
+      const message = new SiweMessage({
+        address,
+        domain: SIWE.DOMAIN, //window.location.host,
+        statement: SIWE.SIGN_MESSAGE.concat(address),
+        uri: SIWE.URI, //window.location.origin,
+        version: "1",
+        chainId,
+        nonce: "fi1fKjrcaLbAJB29X",
+      });
+      const signature = await signMessageAsync({
+        message: message.prepareMessage(),
+      });
+
+      console.log("signature is ", signature);
+      // verify signature
+      // Verify signature
+      const verifyRes = await fetch("api/verify", {
+        method: "POST",
+        headers: new Headers({
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        }),
+        body: JSON.stringify({ message, signature, state }),
+      });
+
+      setIsSignedIn(true);
+      console.log("ssssssss", verifyRes);
+    } catch (error) {
+      console.log("error is ", error);
+      fetchNonce();
+    }
+  };
 
   return (
     <>
@@ -38,16 +93,17 @@ const BuyNow = (props) => {
           </button>
         ) : (
           <button
-            onClick={() => {
-              signMessage({ message: SING_MESSAGE });
-            }}
+            onClick={signUser}
+            // onClick={() => {
+            //   // signMessage({ message: SING_MESSAGE });
+            // }}
             className="book-now p-2 rounded-lg text-md px-4 bg-gray-300 font-bold hover:scale-105 hover:shadow-lg select-none"
           >
             SIGIN
           </button>
         )}
       </div>
-      <TicketDetails isOpen={isOpen} walletAddress={props?.walletAddress} closeModal={closeModal} title={"Labweek 2023"} />
+      <TicketDetails isOpen={isOpen} walletAddress={props?.walletAddress} closeModal={() => setIsOpen(false)} title={"Labweek 2023"} />
     </>
   );
 };

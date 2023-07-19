@@ -30,5 +30,4 @@ const WalletConnectConfig = ({ children }) => {
     </>
   );
 };
-
 export default WalletConnectConfig;

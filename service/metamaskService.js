@@ -1,5 +1,5 @@
-import { CHAINID } from "@/utils/constants";
 import web3 from "web3";
+import { CHAINID } from "../utils/constants";
 
 export const checkNetwork = async () => {
   const chainId = await window?.ethereum?.request({ method: "eth_chainId" });
