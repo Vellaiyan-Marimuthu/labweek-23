@@ -4,8 +4,7 @@ import { NextResponse } from "next/server";
 export async function POST(req, res) {
   try {
     const { message, signature, state } = await req.json();
-    console.log("message is", message);
-    console.log("signature is ", signature);
+  
     const siweMessage = new SiweMessage(message);
     const fields = await siweMessage.validate(signature);
     if (fields.nonce !== state) {

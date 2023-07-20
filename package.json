@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@headlessui/react": "^1.7.15",
+    "@unlock-protocol/contracts": "^0.0.22",
+    "@unlock-protocol/unlock-js": "^0.38.3",
     "@walletconnect/sign-client": "^2.9.0",
     "@web3modal/ethereum": "^2.7.0",
     "@web3modal/react": "^2.7.0",
@@ -18,7 +20,7 @@
     "eslint-config-next": "13.4.9",
     "formik": "^2.4.2",
     "iron-session": "^6.3.1",
-    "js-cookie": "^3.0.5",
+    "js-cookie": "^3.0.4",
     "next": "13.4.9",
     "postcss": "8.4.25",
     "qr-scanner": "^1.4.2",

@@ -4,7 +4,7 @@ import SignInForm from "./form/SignInForm";
 import Loader from "./loader/Loader";
 import { useState } from "react";
 import { LOADER_TYPE } from "../utils/constants";
-const TicketDetails = ({ isOpen, closeModal, title, walletAddress }) => {
+const TicketDetails = ({ isOpen, closeModal, title, walletAddress, accessToken, setAccessToken }) => {
   const [loadingType, setLoadingType] = useState("");
   return (
     <>
@@ -34,7 +34,7 @@ const TicketDetails = ({ isOpen, closeModal, title, walletAddress }) => {
                       <GrFormClose size={20} />
                     </button>
                   </div>
-                  <SignInForm walletAddress={walletAddress} title={title} closeModal={closeModal} setLoadingType={setLoadingType} />
+                  <SignInForm walletAddress={walletAddress} title={title} closeModal={closeModal} setLoadingType={setLoadingType} accessToken={accessToken} setAccessToken={setAccessToken} />
                 </Dialog.Panel>
               </Transition.Child>
             </div>

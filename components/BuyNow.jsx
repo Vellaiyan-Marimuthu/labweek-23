@@ -7,15 +7,20 @@ import { useAccount, useBalance, useNetwork, useSignMessage } from "wagmi";
 import TicketDetails from "./TicketDetails";
 import { SIWE, IS_SIGNED_IN, URI, LOADER_TYPE } from "../utils/constants";
 import Loader from "./.././components/loader/Loader";
+import { LocksmithService } from "@unlock-protocol/unlock-js";
 
 const BuyNow = (props) => {
   const { walletAddress } = props;
+  const { address } = useAccount();
+
   const [isOpen, setIsOpen] = useState(false);
   // const { data, isError, isLoading } = useBalance({ address: props?.address });
   const { data: signData, error, isLoading: isSignLoading, signMessage, variables } = useSignMessage();
   const [isSignedIn, setIsSignedIn] = useState(false);
 
   const [loadingType, setLoadingType] = useState("");
+
+  const [accessToken, setAccessToken] = useState();
 
   useEffect(() => {
     if (signData) {
@@ -40,7 +45,7 @@ const BuyNow = (props) => {
       const nonceRes = (await fetch("api/nonce")).json();
       const nonce = await nonceRes;
       setState(await nonce.data);
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const signUser = async () => {
@@ -57,7 +62,7 @@ const BuyNow = (props) => {
         uri: SIWE.URI, //window.location.origin,
         version: "1",
         chainId,
-        nonce: "fi1fKjrcaLbAJB29X",
+        nonce: state,
       });
       const signature = await signMessageAsync({
         message: message.prepareMessage(),
@@ -83,6 +88,51 @@ const BuyNow = (props) => {
     }
   };
 
+  const sign = async () => {
+
+    try {
+      setLoadingType(LOADER_TYPE.eventLoader);
+      const service = new LocksmithService();
+      const chainId = chain?.id;
+
+      // Creates a SIWE message to be signed
+      const siwe = LocksmithService.createSiweMessage({
+        address,
+        domain: SIWE.DOMAIN, //window.location.host,
+        statement: SIWE.SIGN_MESSAGE.concat(address),
+        uri: SIWE.URI, //window.location.origin,
+        version: "1",
+        chainId,
+        nonce: state,
+      });
+
+      // // Get message text to be signed
+      const message = siwe.prepareMessage();
+
+      // // Sign the message
+      // const signature = wallet.signMessage(message);
+      const signature = await signMessageAsync({
+        message
+      });
+
+      const loginResponse = await service.login({
+        message,
+        signature,
+      });
+      const { accessToken, walletAddress, refreshToken } = loginResponse.data;
+      if (accessToken) {
+        setIsSignedIn(true);
+        setAccessToken(accessToken)
+        Cookies.set("access_token", accessToken);
+      }
+    } catch (error) {
+      console.log("Error occurred while signin : ", error)
+    } finally {
+      setLoadingType("");
+    }
+  };
+
+
   return (
     <>
       {loadingType === LOADER_TYPE.pageLoader && <Loader />}
@@ -98,7 +148,7 @@ const BuyNow = (props) => {
           </button>
         ) : (
           <button
-            onClick={signUser}
+            onClick={sign}
             // onClick={() => {
             //   // signMessage({ message: SING_MESSAGE });
             // }}
@@ -108,7 +158,7 @@ const BuyNow = (props) => {
           </button>
         )}
       </div>
-      <TicketDetails isOpen={isOpen} walletAddress={props?.walletAddress} closeModal={() => setIsOpen(false)} title={"Labweek 2023"} />
+      <TicketDetails isOpen={isOpen} walletAddress={props?.walletAddress} closeModal={() => setIsOpen(false)} title={"Labweek 2023"} accessToken={accessToken} setAccessToken={setAccessToken}/>
     </>
   );
 };
