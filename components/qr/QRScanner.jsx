@@ -1,8 +1,17 @@
 import QrScanner from "qr-scanner";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export const QRScanner = (props) => {
+  const [qrDetails, setQrDetails] = useState();
+
   useEffect(() => {
+    navigator.permissions.query({ name: "camera" }).then((res) => {
+      if (res.state == "granted") {
+        console.log("permisson granded");
+      } else {
+        console.log("permission denied");
+      }
+    });
     const qrScanner = new QrScanner(
       document.getElementById("qr_scanner"),
       (result) => {
@@ -13,7 +22,7 @@ export const QRScanner = (props) => {
     qrScanner.start();
 
     const stopScan = (result) => {
-      console.log("result is ", result);
+      if (address) console.log("result is ", JSON.parse(result).address);
       qrScanner.stop();
     };
   }, []);

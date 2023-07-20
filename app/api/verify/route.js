@@ -1,6 +1,4 @@
 const { SiweMessage } = require("siwe");
-import { withIronSessionApiRoute } from "iron-session/next";
-import { IRON_OPTIONS } from "../../../utils/constants";
 import { NextResponse } from "next/server";
 
 export async function POST(req, res) {

@@ -1,10 +1,14 @@
 import { Field, Form, Formik } from "formik";
 import { useRouter } from "next/navigation";
 import * as Yup from "yup";
+import { useState } from "react";
 import Ticket from "../card/Ticket";
+import { LOADER_TYPE } from "../../utils/constants";
+import Loader from "../loader/Loader";
 
 const SignInForm = (props) => {
   const router = useRouter();
+
   const SignInSchema = Yup.object().shape({
     email: Yup.string().email("Invalid email").required("Please enter your email"),
     fullname: Yup.string().required("Please enter your username"),
@@ -12,6 +16,7 @@ const SignInForm = (props) => {
 
   return (
     <>
+      {/* {loaderType != LOADER_TYPE.pageLoader && <Loader type={LOADER_TYPE.pageLoader} />} */}
       {/* Form */}
       <Formik
         initialValues={{
@@ -20,6 +25,7 @@ const SignInForm = (props) => {
         }}
         validationSchema={SignInSchema}
         onSubmit={async (values) => {
+          props?.setLoadingType(LOADER_TYPE.pageLoader);
           router.push("/pass");
         }}
       >

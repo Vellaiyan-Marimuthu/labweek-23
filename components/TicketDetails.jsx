@@ -1,9 +1,14 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { GrFormClose } from "react-icons/gr";
 import SignInForm from "./form/SignInForm";
+import Loader from "./loader/Loader";
+import { useState } from "react";
+import { LOADER_TYPE } from "../utils/constants";
 const TicketDetails = ({ isOpen, closeModal, title, walletAddress }) => {
+  const [loadingType, setLoadingType] = useState("");
   return (
     <>
+      {loadingType === LOADER_TYPE.pageLoader && <Loader type={LOADER_TYPE.pageLoader} />}
       <Transition appear show={isOpen}>
         <Dialog as="div" className="relative z-20" onClose={closeModal}>
           <Transition.Child enter="ease-out duration-300" enterFrom="opacity" enterTo="opacity-100" leave="ease-in duration-200" leaveFrom="opacity-100" leaveTo="opacity-0">
@@ -29,7 +34,7 @@ const TicketDetails = ({ isOpen, closeModal, title, walletAddress }) => {
                       <GrFormClose size={20} />
                     </button>
                   </div>
-                  <SignInForm walletAddress={walletAddress} title={title} />
+                  <SignInForm walletAddress={walletAddress} title={title} closeModal={closeModal} setLoadingType={setLoadingType} />
                 </Dialog.Panel>
               </Transition.Child>
             </div>

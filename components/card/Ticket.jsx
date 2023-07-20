@@ -1,3 +1,4 @@
+"use client"
 import { useState } from "react";
 import { FiExternalLink } from "react-icons/fi";
 import { Qr } from "../qr/Qr";
@@ -13,7 +14,9 @@ const Ticket = (props) => {
       <div className=" p-2 px-3 border-[1.2px] border-violet-700 rounded-md gap-3 flex flex-col">
         {props?.isHeader && (
           <div className="flex justify-between items-center">
-            <h1 className="text-xl font-bold">{props?.headerTitle}</h1>
+            <div>
+              <h1 className="text-xl font-bold">{props?.headerTitle}</h1>
+            </div>
             <QrOptions isQrOpen={isQrOpen} qrType={qrType} setIsQrOpen={setIsQrOpen} setQrType={setQrType} />
           </div>
         )}

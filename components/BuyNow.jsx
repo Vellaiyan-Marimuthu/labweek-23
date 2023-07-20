@@ -5,14 +5,17 @@ import { useEffect, useState } from "react";
 import { SiweMessage } from "siwe";
 import { useAccount, useBalance, useNetwork, useSignMessage } from "wagmi";
 import TicketDetails from "./TicketDetails";
-import { SIWE, IS_SIGNED_IN, URI } from "../utils/constants";
+import { SIWE, IS_SIGNED_IN, URI, LOADER_TYPE } from "../utils/constants";
+import Loader from "./.././components/loader/Loader";
 
 const BuyNow = (props) => {
   const { walletAddress } = props;
   const [isOpen, setIsOpen] = useState(false);
-  const { data, isError, isLoading } = useBalance({ address: props?.address });
+  // const { data, isError, isLoading } = useBalance({ address: props?.address });
   const { data: signData, error, isLoading: isSignLoading, signMessage, variables } = useSignMessage();
   const [isSignedIn, setIsSignedIn] = useState(false);
+
+  const [loadingType, setLoadingType] = useState("");
 
   useEffect(() => {
     if (signData) {
@@ -41,6 +44,7 @@ const BuyNow = (props) => {
   };
 
   const signUser = async () => {
+    setLoadingType(LOADER_TYPE.eventLoader);
     try {
       const chainId = chain?.id;
       // sign user
@@ -59,8 +63,6 @@ const BuyNow = (props) => {
         message: message.prepareMessage(),
       });
 
-      console.log("signature is ", signature);
-      // verify signature
       // Verify signature
       const verifyRes = await fetch("api/verify", {
         method: "POST",
@@ -72,15 +74,18 @@ const BuyNow = (props) => {
       });
 
       setIsSignedIn(true);
-      console.log("ssssssss", verifyRes);
+      console.log("Verified Signature", verifyRes);
     } catch (error) {
       console.log("error is ", error);
       fetchNonce();
+    } finally {
+      setLoadingType("");
     }
   };
 
   return (
     <>
+      {loadingType === LOADER_TYPE.pageLoader && <Loader />}
       <div className="mt-3">
         {Cookies.get(IS_SIGNED_IN) === IS_SIGNED_IN || isSignedIn ? (
           <button
@@ -97,9 +102,9 @@ const BuyNow = (props) => {
             // onClick={() => {
             //   // signMessage({ message: SING_MESSAGE });
             // }}
-            className="book-now p-2 rounded-lg text-md px-4 bg-gray-300 font-bold hover:scale-105 hover:shadow-lg select-none"
+            className="book-now p-2 rounded-lg text-md px-4 bg-gray-300 hover:scale-105 hover:shadow-lg font-bold  select-none"
           >
-            SIGIN
+            {loadingType === LOADER_TYPE.eventLoader ? <Loader type={LOADER_TYPE.eventLoader} /> : <p>SIGIN</p>}
           </button>
         )}
       </div>
