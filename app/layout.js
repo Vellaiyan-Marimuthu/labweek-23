@@ -1,5 +1,5 @@
-import WalletConnectConfig from "@/components/WalletConnectConfig";
 import "./globals.css";
+import WalletConnectConfig from "./../components/WalletConnectConfig";
 
 export const metadata = {
   title: "Lab-week payments",
