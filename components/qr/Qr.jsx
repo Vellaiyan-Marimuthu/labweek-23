@@ -1,9 +1,9 @@
 import { Dialog, Transition } from "@headlessui/react";
 import React from "react";
 import { GrFormClose } from "react-icons/gr";
-import QRCode from "react-qr-code";
 import { QR_TYPE } from "../../utils/constants";
 import { QRScanner } from "./../../components/qr/QRScanner";
+import QrCode from './QrCode';
 
 export const Qr = ({ isOpen, closeModal, title, walletAddress, qrType, footer }) => {
   return (
@@ -36,7 +36,7 @@ export const Qr = ({ isOpen, closeModal, title, walletAddress, qrType, footer })
                   <div className="flex gap-3 justify-center mt-4 flex-col items-center ">
                     <div className="p-2 border-2 rounded-lg">
                       {qrType === QR_TYPE.code ? (
-                        <QRCode fgColor="#4238C7" value={`{address: ${walletAddress}, cost: "0.0001FIL", name: "LabWeek-23"}`} size={256} className="h-[200px] w-[200px] " level="Q" />
+                        <QrCode walletAddress={walletAddress} />
                       ) : (
                         <QRScanner />
                       )}

@@ -121,6 +121,7 @@ const BuyNow = (props) => {
       });
       const { accessToken, walletAddress, refreshToken } = loginResponse.data;
       if (accessToken) {
+        window.localStorage.setItem("token", accessToken);
         setIsSignedIn(true);
         setAccessToken(accessToken)
         Cookies.set("access_token", accessToken);

@@ -45,3 +45,42 @@ export const GetTicket = async () => {
     }
 
 }
+
+
+export const getQr = async (walletAddress) => {
+
+    try {
+    const token = window?.localStorage?.getItem("token");
+    const keysUrl =  `https://locksmith.unlock-protocol.com/v2/api/${UNLOCK_NETWORK_ID}/locks/${LOCK_ADDRESS}/keys?filterKey=owner`;
+    const header = new Headers ({ 
+            'Accept': 'application/json', 
+            'Authorization': `Bearer ${token}`
+          })
+  
+      const keysResult = await fetch(keysUrl, {
+        method: 'GET',
+        headers: header,
+      })
+
+    const data  = await keysResult.json();
+
+    if (data) {
+    const foundObject = await data.find(obj => Object.values(obj).includes(walletAddress.toLowerCase()));
+    // const url = `https://locksmith.unlock-protocol.com/v2/api/ticket/${UNLOCK_NETWORK_ID}/${LOCK_ADDRESS}/${foundObject.token}/qr`
+    //     const requestOptions = {
+    //         method: "GET",
+    //         headers: header,
+    //     }
+    //     const result = await fetch(url, requestOptions)
+    //     console.log(result);
+    // }
+
+    return foundObject;
+    }
+    }
+
+    catch (error) {
+        console.log("Error occurred in getting qr", error);
+    }
+
+}

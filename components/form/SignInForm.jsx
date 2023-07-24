@@ -1,53 +1,49 @@
-'use client'
+"use client";
 import { Field, Form, Formik } from "formik";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import * as Yup from "yup";
-import { useState } from "react";
-import Ticket from "../card/Ticket";
 import { ABI, LOADER_TYPE, LOCK_ADDRESS } from "../../utils/constants";
-import Loader from "../loader/Loader";
-import { buyPass } from './../../service/unlockService';
-import { Cookies } from 'js-cookie';
-import { useEffect } from "react";
-import { abis } from "@unlock-protocol/contracts"
+import Ticket from "../card/Ticket";
+import { buyPass } from "./../../service/unlockService";
 
-import { usePrepareContractWrite, useContractWrite, useWaitForTransaction } from 'wagmi'
+import { useContractWrite, usePrepareContractWrite, useWaitForTransaction } from "wagmi";
 
 const SignInForm = (props) => {
   const router = useRouter();
-  const [accessToken, setAccessToken] = useState();
-
 
   let params = [["20000000000000000"], [props?.walletAddress], ["0x0000000000000000000000000000000000000000"], ["0x3a6d2fabdf51af157f3fc79bb50346a615c08bf6"], ["0x"]];
 
-  const { config ,error, isError} = usePrepareContractWrite({
+  const { config, error, isError } = usePrepareContractWrite({
     address: LOCK_ADDRESS,
     abi: ABI,
-    functionName: 'purchase',
+    functionName: "purchase",
     value: "20000000000000000",
     args: params,
-  })
+  });
 
-  const { data, write } = useContractWrite(config)
+  const { data, write } = useContractWrite(config);
   const { isLoading, isSuccess } = useWaitForTransaction({
     hash: data?.hash,
-  })
+  });
 
   const onSuccess = () => {
     try {
-      write?.()
+      write?.();
     } catch (error) {
-      console.log('error is :', error);
+      console.log("error is :", error);
     }
-  }
+  };
 
   useEffect(() => {
     if (isSuccess) {
       router.push("/pass");
-    } 
-    console.log("errro is", error);
-    console.log("isError is", isError);
-  }, [isSuccess, isLoading, error, isError])
+    }
+
+    if (isError) {
+      console.log("Occurred error is : ", error);
+    }
+  }, [isSuccess, isLoading, error, isError]);
 
   const SignInSchema = Yup.object().shape({
     email: Yup.string().email("Invalid email").required("Please enter your email"),
@@ -66,14 +62,14 @@ const SignInForm = (props) => {
         validationSchema={SignInSchema}
         onSubmit={async (values) => {
           const data = JSON.stringify({
-            "metadata": {
-              "public": {
-                "email": values.email,
-                username: values.username
+            metadata: {
+              public: {
+                email: values.email,
+                username: values.username,
               },
-              "protected": {}
-            }
-          })
+              protected: {},
+            },
+          });
           props?.setLoadingType(LOADER_TYPE.pageLoader);
           buyPass(data, onSuccess, props?.walletAddress, props?.accessToken, props?.setLoadingType);
         }}
@@ -102,7 +98,7 @@ const SignInForm = (props) => {
 
             {/* Signin button */}
             <div className="flex justify-center  p-2 font-bold">
-              <button className="border p-2 px-7 bg-gray-300 rounded-lg hover:shadow-lg hover:scale-105" type="submit">
+              <button disabled={isError} className="border p-2 px-7 bg-gray-300 rounded-lg hover:shadow-lg hover:scale-105" type="submit">
                 Buy
               </button>
             </div>
