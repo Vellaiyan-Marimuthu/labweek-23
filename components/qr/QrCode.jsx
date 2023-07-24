@@ -7,35 +7,7 @@ import { getQr } from "../../service/unlockService";
 const QrCode = (props) => {
     const qrRef = useRef(null);
     const [qrData, setQrData] = useState();
-
-
-
-
-    const qrCode = new QRCodeStyling({
-        width: 300,
-        height: 300,
-        type: "svg",
-        data: {
-            "keyId": 0,
-            "info" : "Labweek23 Basic Pass"
-        },
-        image: "https://labweek23-rd.vercel.app/assets/images/LWcube.svg" ,
-        dotsOptions: {
-            color: "#4267b2",
-            type: "rounded"
-        },
-        
-        backgroundOptions: {
-            color: "#e9ebee",
-        },
-        imageOptions: {
-            crossOrigin: "anonymous",
-            margin: 15,
-        }
-    });
-
     useEffect(() => {
-        qrCode.append(qrRef.current);
         getQrDetails()
     }, [])
 
@@ -43,6 +15,31 @@ const QrCode = (props) => {
         setQrData(await getQr(props?.walletAddress));
     }
 
+    useEffect (() => {
+        if(qrData) {
+            const qrCode = new QRCodeStyling({
+                width: 300,
+                height: 300,
+                type: "svg",
+                data: JSON.stringify(qrData),
+                image: "https://labweek23-rd.vercel.app/assets/images/LWcube.svg" ,
+                dotsOptions: {
+                    color: "#4267b2",
+                    type: "rounded"
+                },
+                
+                backgroundOptions: {
+                    color: "#e9ebee",
+                },
+                imageOptions: {
+                    crossOrigin: "anonymous",
+                    margin: 15,
+                }
+            });
+        qrCode.append(qrRef.current);
+
+        }
+    }, [qrData])
     return (
         <div ref={qrRef}>
             

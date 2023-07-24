@@ -84,3 +84,36 @@ export const getQr = async (walletAddress) => {
     }
 
 }
+
+
+export const checkUser = async (token, walletAddress) => {
+    try {
+        const keysUrl =  `https://locksmith.unlock-protocol.com/v2/api/${UNLOCK_NETWORK_ID}/locks/${LOCK_ADDRESS}/keys?filterKey=owner`;
+        const header = new Headers ({ 
+                'Accept': 'application/json', 
+                'Authorization': `Bearer ${token}`
+              })
+      
+          const keysResult = await fetch(keysUrl, {
+            method: 'GET',
+            headers: header,
+          })
+    
+        const data  = await keysResult.json();
+
+        console.log("data is ", data);
+        if (data) {
+        const foundObject = await data.find(obj => Object.values(obj).includes(walletAddress.toLowerCase()));
+        if (foundObject) {
+            return true;
+        } else {
+            return false;
+        }
+        }
+        }
+    
+        catch (error) {
+            console.log("Error occurred in getting qr", error);
+            return null;
+        }
+}

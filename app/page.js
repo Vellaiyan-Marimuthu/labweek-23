@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { useAccount, useNetwork } from "wagmi";
 import BuyNow from "../components/BuyNow";
 import ConnectWallet from "../components/ConnectWallet";
-import { CHAINID } from "../utils/constants";
+import { CHAINID, LOADER_TYPE } from "../utils/constants";
+import Loader from "../components/loader/Loader";
 
 export default function Home() {
   const { address } = useAccount();
@@ -18,6 +19,7 @@ export default function Home() {
     }
   }, [address, chain]);
   return (
+    <>
     <div className="flex justify-start  flex-col md:flex-row">
       <div className="flex w-100 h-screen justify-center items-center" style={{ background: "linear-gradient(93.58deg, #1F0046 0%, #3A0095 100%)" }}>
         <div
@@ -47,5 +49,6 @@ export default function Home() {
         </div>
       </div>
     </div>
+    </>
   );
 }

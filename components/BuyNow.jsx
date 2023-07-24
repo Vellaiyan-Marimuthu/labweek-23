@@ -8,11 +8,13 @@ import TicketDetails from "./TicketDetails";
 import { SIWE, IS_SIGNED_IN, URI, LOADER_TYPE } from "../utils/constants";
 import Loader from "./.././components/loader/Loader";
 import { LocksmithService } from "@unlock-protocol/unlock-js";
+import { checkUser } from "../service/unlockService";
+import { useRouter } from "next/navigation";
 
 const BuyNow = (props) => {
   const { walletAddress } = props;
   const { address } = useAccount();
-
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   // const { data, isError, isLoading } = useBalance({ address: props?.address });
   const { data: signData, error, isLoading: isSignLoading, signMessage, variables } = useSignMessage();
@@ -21,6 +23,8 @@ const BuyNow = (props) => {
   const [loadingType, setLoadingType] = useState("");
 
   const [accessToken, setAccessToken] = useState();
+
+  const [isLoader, setIsLoader] = useState(false);
 
   useEffect(() => {
     if (signData) {
@@ -121,10 +125,20 @@ const BuyNow = (props) => {
       });
       const { accessToken, walletAddress, refreshToken } = loginResponse.data;
       if (accessToken) {
+        setIsLoader(true);
+        if (await checkUser(accessToken, walletAddress)) {
         window.localStorage.setItem("token", accessToken);
         setIsSignedIn(true);
         setAccessToken(accessToken)
         Cookies.set("access_token", accessToken);
+        router.push("/pass");
+        } else {
+          window.localStorage.setItem("token", accessToken);
+          setIsSignedIn(true);
+          setAccessToken(accessToken)
+          Cookies.set("access_token", accessToken);
+          setIsLoader(false);
+        }
       }
     } catch (error) {
       console.log("Error occurred while signin : ", error)
@@ -136,6 +150,9 @@ const BuyNow = (props) => {
 
   return (
     <>
+    {isLoader && (
+    <Loader type={LOADER_TYPE.pageLoader}/>
+    )}
       {loadingType === LOADER_TYPE.pageLoader && <Loader />}
       <div className="mt-3">
         {Cookies.get(IS_SIGNED_IN) === IS_SIGNED_IN || isSignedIn ? (
