@@ -23,7 +23,7 @@
     "iron-session": "^6.3.1",
     "js-cookie": "^3.0.4",
     "lokijs": "^1.5.12",
-    "next": "13.4.9",
+    "next": "13.4.12",
     "pino-pretty": "^10.1.0",
     "postcss": "8.4.25",
     "qr-code-styling": "^1.6.0-rc.1",

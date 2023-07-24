@@ -8,7 +8,7 @@ import { checkNetwork } from "../service/metamaskService";
 import { CHAINID } from "../utils/constants";
 import { useRouter } from "next/navigation";
 
-const ConnectWallet = () => {
+const ConnectWallet = (props) => {
   const [isNetworkConnected, setIsNetworkConnected] = useState(false);
   const { address } = useAccount();
   const router = useRouter();

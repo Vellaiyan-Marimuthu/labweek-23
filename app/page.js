@@ -4,8 +4,7 @@ import { useEffect, useState } from "react";
 import { useAccount, useNetwork } from "wagmi";
 import BuyNow from "../components/BuyNow";
 import ConnectWallet from "../components/ConnectWallet";
-import { CHAINID, LOADER_TYPE } from "../utils/constants";
-import Loader from "../components/loader/Loader";
+import { CHAINID } from "../utils/constants";
 
 export default function Home() {
   const { address } = useAccount();

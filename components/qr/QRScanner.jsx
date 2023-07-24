@@ -10,7 +10,7 @@ export const QRScanner = (props) => {
 
   useEffect(() => {
     navigator.permissions.query({ name: "camera" }).then((res) => {
-      if (res.state == "granted") {
+      if (res.state === "granted") {
         console.log("permisson granded");
       } else {
         console.log("permission denied");
@@ -54,7 +54,7 @@ export const QRScanner = (props) => {
       method: 'PUT',
       headers: header,
     })
-    if(keysResult?.status == 202) {
+    if(keysResult?.status === 202) {
       setIsLoading(false);
       setIsVerified(true);
     } else {
