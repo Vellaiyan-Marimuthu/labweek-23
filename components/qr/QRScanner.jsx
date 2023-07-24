@@ -6,6 +6,7 @@ import { LOADER_TYPE, LOCK_ADDRESS, UNLOCK_NETWORK_ID } from "../../utils/consta
 export const QRScanner = (props) => {
   const [qrDetails, setQrDetails] = useState();
   const [isLoading, setIsLoading] = useState(false);
+  const [isVerified, setIsVerified] = useState(false);
 
   useEffect(() => {
     navigator.permissions.query({ name: "camera" }).then((res) => {
@@ -26,14 +27,18 @@ export const QRScanner = (props) => {
 
     const stopScan = (result) => {
       qrScanner.stop();
-      console.log("result is ", (JSON.parse(result.data)).token);
-
-      if((JSON.parse(result.data))?.token) {
+      try {
+      if((JSON.parse(result?.data))?.token) {
         setQrDetails((JSON.parse(result.data)));
-        qrScanner.stop();
+        qrScanner.start();
+
       } else {
         qrScanner.start();
       }
+    } catch (e) {
+      qrScanner.start();
+    }
+    
 
     };
   }, []);
@@ -49,7 +54,12 @@ export const QRScanner = (props) => {
       method: 'PUT',
       headers: header,
     })
-    console.log("result is ", keysResult);
+    if(keysResult?.status == 202) {
+      setIsLoading(false);
+      setIsVerified(true);
+    } else {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -59,14 +69,22 @@ export const QRScanner = (props) => {
         {qrDetails ? (
           <div className="m-4">
             <h1 className="font-bold text-2xl">Valid QR Found</h1>
+
             <div className="flex w-full items-center justify-center mt-4 gap-6">
+              
               {isLoading ? (
                 <Loader type={LOADER_TYPE.eventLoader} />
               ) : (
                 <>
+                {!isVerified && (
                   <button className="p-2 rounded-lg text-md px-4 bg-gray-300 hover:scale-105 hover:shadow-lg font-bold  select-none"
                     onClick={() => { setIsLoading(true); checkin()}}>Check In</button>
-                  <button className="p-2 rounded-lg text-md px-4 bg-gray-300 hover:scale-105 hover:shadow-lg font-bold  select-none">Scan</button>
+                )}
+                        {isVerified && (
+            <h1 className="text-xl font-bold">Verified!</h1>
+        )}
+                  {/* <button className="p-2 rounded-lg text-md px-4 bg-gray-300 hover:scale-105 hover:shadow-lg font-bold  select-none"
+                  onClick={() => setQrDetails()}>Scan</button> */}
                 </>
               )}
             </div>
